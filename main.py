@@ -193,7 +193,7 @@ def main():
         print(f'Обрабатываются вакансии по языку программирования: {programming_lang}')
         """ HeadHunter """
         vacancies_count_hh, vacancies_dict_hh = get_hh_vacancies(programming_lang)
-        languages_statistics = calculate_languages_statistics_hh(
+        calculate_languages_statistics_hh(
             vacancies_dict_hh, programming_lang, vacancies_count_hh, lang_statistics_hh)
         table_hh.append(
             [programming_lang,
@@ -204,7 +204,7 @@ def main():
 
         """ SuperJob """
         sj_vacancies_dict = get_sj_vacancies(programming_lang, sj_secret_key)
-        lang_statistics = calculate_languages_statistics_sj(
+        calculate_languages_statistics_sj(
             sj_vacancies_dict, lang_statistics_sj, programming_lang)
         table_sj.append(
             [programming_lang,
