@@ -190,7 +190,7 @@ def main():
     ]
 
     for programming_lang in programming_lang_list:
-        print(f'Обрабатывается язык программирования: {programming_lang}')
+        print(f'Обрабатываются вакансии по языку программирования: {programming_lang}')
         """ HeadHunter """
         vacancies_count_hh, vacancies_dict_hh = get_hh_vacancies(programming_lang)
         languages_statistics = calculate_languages_statistics_hh(
