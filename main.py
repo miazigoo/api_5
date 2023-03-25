@@ -41,7 +41,7 @@ def predict_rub_salary_hh(vacancy):
     """Получение полей зарплаты "От" и "До" """
     try:
         vacancy_salary = vacancy['salary']
-        currency = vacancy_salary['currency']
+        currency = vacancy_salary['currency'] or None
         salary_from = vacancy_salary['from'] or None
         salary_to = vacancy_salary['to'] or None
         if not currency == 'RUR':
