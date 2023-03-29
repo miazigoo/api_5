@@ -18,23 +18,15 @@ def get_hh_vacancies(programming_lang):
     response = requests.get(url=url, params=params)
     response.raise_for_status()
     count_and_pages = response.json()
-    count = count_and_pages['found']
-    pages = count_and_pages['pages']
     vacancies = []
 
-    while page < pages:
-        params_page = {
-            'text': programming_lang,
-            'area': id_moscow_city,
-            'period': search_days_period,
-
-        }
-        page_response = requests.get(url, params=params_page)
+    while page < count_and_pages['pages']:
+        page_response = requests.get(url, params=params)
         page_response.raise_for_status()
         vacancies.append(page_response.json())
         page += 1
 
-    return count, vacancies
+    return count_and_pages['found'], vacancies
 
 
 def predict_rub_salary_hh(vacancy):
@@ -68,18 +60,18 @@ def predict_salary(salary_from, salary_to):
 
 def calculate_languages_statistics_hh(vacancies_hh):
     """Подсчет по яз. средней з/п и кол-во обработанных вакансий"""
-    salary = []
+    salaries = []
     for vacancies in vacancies_hh:
         for vacancy in vacancies['items']:
             salary_from, salary_to = predict_rub_salary_hh(vacancy)
             rub_salary = predict_salary(salary_from, salary_to)
             if rub_salary:
-                salary.append(int(rub_salary))
+                salaries.append(int(rub_salary))
     try:
-        average_salary_hh = int(sum(salary) / len(salary))
+        average_salary_hh = int(sum(salaries) / len(salaries))
     except ZeroDivisionError:
         average_salary_hh = 0
-    vacancies_processed_hh = len(salary)
+    vacancies_processed_hh = len(salaries)
 
     return vacancies_processed_hh, average_salary_hh
 
@@ -137,7 +129,7 @@ def predict_rub_salary_sj(vacancy):
 
 def calculate_languages_statistics_sj(sj_vacancies):
     """Подсчет по яз. средней з/п, кол-во вакансий и кол-во обработанных вакансий"""
-    salary = []
+    salaries = []
     vacancies_count_sj = 0
     for vacancies in sj_vacancies:
         for vacancy in vacancies:
@@ -145,10 +137,10 @@ def calculate_languages_statistics_sj(sj_vacancies):
             salary_from, salary_to = predict_rub_salary_hh(vacancy)
             rub_salary = predict_salary(salary_from, salary_to)
             if rub_salary:
-                salary.append(int(rub_salary))
-    vacancies_processed_sj = len(salary)
+                salaries.append(int(rub_salary))
+    vacancies_processed_sj = len(salaries)
     try:
-        average_salary_sj = int(sum(salary) / len(salary))
+        average_salary_sj = int(sum(salaries) / len(salaries))
     except ZeroDivisionError:
         average_salary_sj = 0
 
@@ -165,7 +157,7 @@ def view_table(table,title):
 def main():
     load_dotenv()
     sj_secret_key = os.environ['SUPERJOB_SECRET_KEY']
-    programming_languages = ('JavaScript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'Go', 'C')
+    programming_languages = ('JavaScript', 'Ruby')#('JavaScript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'Go', 'C')
     lang_statistics_hh = {}
     lang_statistics_sj = {}
     table_sj = [
@@ -187,9 +179,9 @@ def main():
         }
         table_hh.append(
             [programming_lang,
-             lang_statistics_hh[programming_lang]["vacancies_found"],
-             lang_statistics_hh[programming_lang]["vacancies_processed"],
-             lang_statistics_hh[programming_lang]["average_salary"]
+             vacancies_count_hh,
+             vacancies_processed_hh,
+             average_salary_hh
              ])
 
         """ SuperJob """
@@ -202,9 +194,9 @@ def main():
         }
         table_sj.append(
             [programming_lang,
-             lang_statistics_sj[programming_lang]["vacancies_found"],
-             lang_statistics_sj[programming_lang]["vacancies_processed"],
-             lang_statistics_sj[programming_lang]["average_salary"]
+             vacancies_count_sj,
+             vacancies_processed_sj,
+             average_salary_sj
              ])
 
     """ view table """
