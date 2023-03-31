@@ -13,20 +13,22 @@ def get_hh_vacancies(programming_lang):
         'text': programming_lang,
         'area': id_moscow_city,
         'period': search_days_period,
-        'page': page,
+        'page': page
     }
-    response = requests.get(url=url, params=params)
-    response.raise_for_status()
-    count_and_pages = response.json()
+    count = 0
     vacancies = []
 
-    while page < count_and_pages['pages']:
+    while True:
         page_response = requests.get(url, params=params)
         page_response.raise_for_status()
-        vacancies.append(page_response.json())
+        vacancies_and_count = page_response.json()
+        if not vacancies_and_count:
+            break
+        vacancies.append(vacancies_and_count)
+        count = vacancies_and_count['found']
         page += 1
 
-    return count_and_pages['found'], vacancies
+    return count, vacancies
 
 
 def predict_rub_salary_hh(vacancy):
@@ -157,7 +159,7 @@ def view_table(table,title):
 def main():
     load_dotenv()
     sj_secret_key = os.environ['SUPERJOB_SECRET_KEY']
-    programming_languages = ('JavaScript', 'Ruby')#('JavaScript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'Go', 'C')
+    programming_languages = ('Go', 'Ruby')#('JavaScript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'Go', 'C')
     lang_statistics_hh = {}
     lang_statistics_sj = {}
     table_sj = [
