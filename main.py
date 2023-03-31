@@ -159,9 +159,7 @@ def view_table(table,title):
 def main():
     load_dotenv()
     sj_secret_key = os.environ['SUPERJOB_SECRET_KEY']
-    programming_languages = ('Go', 'Ruby')#('JavaScript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'Go', 'C')
-    lang_statistics_hh = {}
-    lang_statistics_sj = {}
+    programming_languages = ('JavaScript', 'Java', 'Python', 'Ruby', 'PHP', 'C++', 'C#', 'Go', 'C')
     table_sj = [
         ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
     ]
@@ -174,11 +172,6 @@ def main():
         """ HeadHunter """
         vacancies_count_hh, vacancies_hh = get_hh_vacancies(programming_lang)
         vacancies_processed_hh, average_salary_hh = calculate_languages_statistics_hh(vacancies_hh)
-        lang_statistics_hh[programming_lang] = {
-            "vacancies_found": vacancies_count_hh,
-            "vacancies_processed": vacancies_processed_hh,
-            "average_salary": average_salary_hh,
-        }
         table_hh.append(
             [programming_lang,
              vacancies_count_hh,
@@ -189,11 +182,6 @@ def main():
         """ SuperJob """
         sj_vacancies = get_sj_vacancies(programming_lang, sj_secret_key)
         vacancies_processed_sj, average_salary_sj, vacancies_count_sj = calculate_languages_statistics_sj(sj_vacancies)
-        lang_statistics_sj[programming_lang] = {
-            "vacancies_found": vacancies_count_sj,
-            "vacancies_processed": vacancies_processed_sj,
-            "average_salary": average_salary_sj,
-        }
         table_sj.append(
             [programming_lang,
              vacancies_count_sj,
